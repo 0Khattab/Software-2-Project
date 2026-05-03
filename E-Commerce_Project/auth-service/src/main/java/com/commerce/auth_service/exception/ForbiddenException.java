@@ -2,7 +2,6 @@ package com.commerce.auth_service.exception;
 
 import org.springframework.http.HttpStatus;
 
-// exception/ForbiddenException.java
 
 public class ForbiddenException extends BaseApiException {
 

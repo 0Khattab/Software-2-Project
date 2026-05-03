@@ -14,9 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // For simplicity, we're allowing all requests to 
-    // /auth/** and requiring authentication for everything else. 
-    // and add JWT filter later
+    // add JWT filter later
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -24,7 +22,7 @@ public class SecurityConfig {
             .sessionManagement(s ->
                 s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/**","/admin/auth/employees/**").permitAll()
                 .anyRequest().authenticated()
             );
         return http.build();

@@ -39,8 +39,8 @@ public class AuthService {
         User user = User.builder()
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .role(User.Role.USER)  // For demo, default to ADMIN. In production, default to CUSTOMER and allow role assignment by admin.
-                .status(User.Status.ACTIVE)  //or PENDING if email verification needed
+                .role(User.Role.USER)  
+                .status(User.Status.ACTIVE)  
                 .build();
 
         userRepository.save(user);

@@ -7,26 +7,24 @@ import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
 
-// dto/error/ErrorResponse.java
 
 @Getter
-@Builder // lets us build it cleanly in the handler
+@Builder 
 public class ErrorResponse {
 
     private final LocalDateTime timestamp;
     private final int status;
-    private final String error; // e.g. "Unauthorized"
-    private final String message; // human-readable detail
-    private final String path; // request URI
+    private final String error; 
+    private final String message; 
+    private final String path; 
 
-    // Static factory — used in GlobalExceptionHandler
     public static ErrorResponse of(HttpStatus httpStatus,
             String message,
             HttpServletRequest request) {
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(httpStatus.value())
-                .error(httpStatus.getReasonPhrase()) // "Unauthorized", "Bad Request" …
+                .error(httpStatus.getReasonPhrase()) 
                 .message(message)
                 .path(request.getRequestURI())
                 .build();

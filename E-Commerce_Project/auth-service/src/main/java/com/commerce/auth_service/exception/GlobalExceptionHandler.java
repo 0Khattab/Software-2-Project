@@ -13,13 +13,11 @@ import com.commerce.auth_service.dto.error.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
-// exception/GlobalExceptionHandler.java
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // ─── 1. Handle each custom exception individually ────────────────────────
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(
@@ -71,9 +69,6 @@ public class GlobalExceptionHandler {
         return buildResponse(ex.getStatus(), ex.getMessage(), request);
     }
 
-    // ─── 2. Fallback for ALL other BaseApiException subclasses ───────────────
-    // Any new custom exception you add gets handled here automatically
-
     @ExceptionHandler(BaseApiException.class)
     public ResponseEntity<ErrorResponse> handleBaseApiException(
             BaseApiException ex,
@@ -84,14 +79,12 @@ public class GlobalExceptionHandler {
         return buildResponse(ex.getStatus(), ex.getMessage(), request);
     }
 
-    // ─── 3. Handle Spring validation errors (@Valid on DTOs) ─────────────────
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(
             MethodArgumentNotValidException ex,
             HttpServletRequest request) {
 
-        // Collect all field errors into one message
         String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -103,15 +96,12 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, message, request);
     }
 
-    // ─── 4. Catch-all — unexpected exceptions ────────────────────────────────
-    // Hides internal details from the client (security best practice)
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex,
             HttpServletRequest request) {
 
-        // Log the full stack trace internally — never expose it to the client
         log.error("Unexpected error at {}: {}", request.getRequestURI(), ex.getMessage(), ex);
 
         return buildResponse(
@@ -129,7 +119,6 @@ public class GlobalExceptionHandler {
         return buildResponse(ex.getStatus(), ex.getMessage(), request);
     }
 
-    // ─── Private helper ───────────────────────────────────────────────────────
 
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status,
             String message,

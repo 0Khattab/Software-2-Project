@@ -85,10 +85,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                 String userId = jwtUtil.extractUserId(token);
                 Set<String> permissions = jwtUtil.extractPermissions(token);
 
-                // if (!isAuthorized(path, method, role, permissions)) {
-                // return reject(exchange, HttpStatus.FORBIDDEN,
-                // "You do not have permission to access this resource");
-                // }
                 if (!isRoleAuthorized(path, method, role)) {
                         return reject(exchange, HttpStatus.FORBIDDEN,
                                         "You do not have permission to access this resource");
@@ -116,24 +112,9 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                 return -1;
         }
 
-        // private boolean isAuthorized(String path, HttpMethod method, String role,
-        // Set<String> permissions) {
-
-        // if (RoleHierarchy.isSuperRole(role)) {
-        // return true;
-        // }
-
-        // return routeRules.stream()
-        // .filter(rule -> rule.matches(path, method))
-        // .findFirst()
-        // .map(rule -> rule.isRoleAllowed(role))
-        // .orElse(false);
-        // }
         private boolean isRoleAuthorized(String path,
                         HttpMethod method,
                         String role) {
-                // ADMIN passes role check always
-                // (permission check below will still apply)
                 if (RoleHierarchy.isElevatedRole(role))
                         return true;
 
@@ -155,8 +136,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                                         if (!rule.isPermissionRequired())
                                                 return true;
 
-                                        if (RoleHierarchy.isElevatedRole(role)
-                                                        && permissions.isEmpty()) {
+                                        if (RoleHierarchy.isElevatedRole(role)) {
                                                 return true;
                                         }
 

@@ -25,4 +25,8 @@ public interface UserPermissionRepository
                         "AND up.permission.id = :permissionId")
         void deleteByUserIdAndPermissionId(@Param("userId") String userId,
                         @Param("permissionId") String permissionId);
+
+        @Modifying
+        @Query("DELETE FROM UserPermission up WHERE up.user.id = :userId")
+        void deleteAllByUserId(@Param("userId") String userId);
 }

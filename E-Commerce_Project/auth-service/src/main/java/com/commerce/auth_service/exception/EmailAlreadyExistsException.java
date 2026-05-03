@@ -2,7 +2,6 @@ package com.commerce.auth_service.exception;
 
 import org.springframework.http.HttpStatus;
 
-// exception/EmailAlreadyExistsException.java
 
 public class EmailAlreadyExistsException extends BaseApiException {
 

@@ -32,9 +32,9 @@ public class PermissionService {
         List<UserPermission> userOverrides = userPermissionRepository
             .findByUserId(user.getId());
 
-    if (user.getRole() == User.Role.ADMIN && userOverrides.isEmpty()) {
-        return Collections.emptySet(); 
-    }
+    // if (user.getRole() == User.Role.ADMIN && userOverrides.isEmpty()) {
+    //     return Collections.emptySet(); 
+    // }
 
         Set<String> effective = rolePermissionRepository
                 .findByRole(user.getRole().name())

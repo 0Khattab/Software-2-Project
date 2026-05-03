@@ -20,12 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-// exception/GatewayExceptionHandler.java
-
-/**
- * Catches any unhandled exception that escapes the filter chain.
- * Without this, Spring returns an HTML Whitelabel error page — not JSON.
- */
 @Component
 @Order(-1)
 @RequiredArgsConstructor

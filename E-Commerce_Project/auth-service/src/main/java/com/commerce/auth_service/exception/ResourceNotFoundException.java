@@ -2,10 +2,6 @@ package com.commerce.auth_service.exception;
 
 import org.springframework.http.HttpStatus;
 
-// exception/ResourceNotFoundException.java
-
-// You'll need this in product-service, order-service etc.
-// Add it now to keep things consistent across all microservices.
 
 public class ResourceNotFoundException extends BaseApiException {
 

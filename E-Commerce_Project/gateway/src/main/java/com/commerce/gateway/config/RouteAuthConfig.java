@@ -18,18 +18,18 @@ public class RouteAuthConfig {
             RouteRule.adminOnly("/admin/**"),
             RouteRule.adminOnly("/users/manage/**"),
             
-            // ── Product routes ────────────────────────────────────────────
+            // Product routes
             RouteRule.withPermission(
                 "/products/**", HttpMethod.POST,
-                "product:create", "ADMIN"),
+                "product:create", "ADMIN","EMPLOYEE"),
 
             RouteRule.withPermission(
                 "/products/**", HttpMethod.PUT,
-                "product:update", "ADMIN"),
+                "product:update", "ADMIN","EMPLOYEE"),
 
             RouteRule.withPermission(
                 "/products/**", HttpMethod.DELETE,
-                "product:delete", "ADMIN"),
+                "product:delete", "ADMIN","EMPLOYEE"),
 
             RouteRule.withPermission(
                 "/products/**", HttpMethod.GET,

@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.commerce.auth_service.entity.Permission;
@@ -14,6 +15,7 @@ import com.commerce.auth_service.entity.RolePermission;
 import com.commerce.auth_service.entity.User;
 import com.commerce.auth_service.repository.PermissionRepository;
 import com.commerce.auth_service.repository.RolePermissionRepository;
+import com.commerce.auth_service.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -23,8 +25,11 @@ public class DataInitializer implements ApplicationRunner {
     private  PermissionRepository permissionRepository;
     @Autowired
     private  RolePermissionRepository rolePermissionRepository;
+    @Autowired
+    private  UserRepository userRepository;
+    @Autowired
+    private  PasswordEncoder passwordEncoder;
 
-    // ── All system permissions ─────────────────────────────────────────────
     private static final Map<String, String> ALL_PERMISSIONS = Map.ofEntries(
         // Product
         Map.entry("product:read",    "View products"),
@@ -52,10 +57,15 @@ public class DataInitializer implements ApplicationRunner {
         Map.entry("category:manage", "Create/edit/delete categories"),
         // Admin
         Map.entry("admin:dashboard", "View admin dashboard"),
-        Map.entry("admin:reports",   "View sales reports")
+        Map.entry("admin:reports",   "View sales reports"),
+        // Employee 
+        Map.entry("employee:create",    "Add new employees"),
+        Map.entry("employee:read",      "View employees"),
+        Map.entry("employee:update",    "Update employee details"),
+        Map.entry("employee:delete",    "Remove employees"),
+        Map.entry("employee:permissions","Manage employee permissions")
     );
 
-    // ── USER role gets these only ──────────────────────────────────────────
     private static final Set<String> USER_PERMISSIONS = Set.of(
         "product:read",
         "order:read",
@@ -72,8 +82,6 @@ public class DataInitializer implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        // ── Step 1: Insert missing permissions ─────────────────────────────
-        // User admin = new User();
         ALL_PERMISSIONS.forEach((name, description) -> {
             if (!permissionRepository.existsByName(name)) {
                 Permission permission = Permission.builder()
@@ -84,7 +92,6 @@ public class DataInitializer implements ApplicationRunner {
             }
         });
 
-        // ── Step 2: Assign to ADMIN — all permissions ──────────────────────
         List<Permission> allPerms = permissionRepository.findAll();
 
         allPerms.forEach(permission -> {
@@ -103,7 +110,6 @@ public class DataInitializer implements ApplicationRunner {
             }
         });
 
-        // ── Step 3: Assign to USER — limited set ───────────────────────────
         allPerms.stream()
                 .filter(p -> USER_PERMISSIONS.contains(p.getName()))
                 .forEach(permission -> {
@@ -121,6 +127,24 @@ public class DataInitializer implements ApplicationRunner {
                         );
                     }
                 });
+        initSuperAdmin();
+    }
+
+    private void initSuperAdmin() {
+        String superAdminEmail = "superadmin@system.com";
+
+        if (userRepository.existsByEmail(superAdminEmail)) {
+            return;
+        }
+
+        User superAdmin = User.builder()
+                .email(superAdminEmail)
+                .passwordHash(passwordEncoder.encode("SuperAdmin@123"))
+                .role(User.Role.ADMIN)
+                .status(User.Status.ACTIVE)
+                .build();
+
+        userRepository.save(superAdmin);
     }
 
 }
