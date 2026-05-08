@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.commerce.auth_service.dto.*;
 import com.commerce.auth_service.entity.RefreshToken;
 import com.commerce.auth_service.entity.User;
+import com.commerce.auth_service.event.UserEventPublisher;
+import com.commerce.auth_service.event.UserRegisteredEvent;
 import com.commerce.auth_service.exception.AccountNotActiveException;
 import com.commerce.auth_service.exception.EmailAlreadyExistsException;
 import com.commerce.auth_service.exception.InvalidCredentialsException;
@@ -30,6 +32,8 @@ public class AuthServiceImp implements IAuthService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private PermissionServiceImp permissionService;
+    @Autowired
+    private UserEventPublisher  userEventPublisher;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -45,6 +49,8 @@ public class AuthServiceImp implements IAuthService {
                 .build();
 
         userRepository.save(user);
+        userEventPublisher.publishUserRegistered(
+                UserRegisteredEvent.from(user));
         return AuthResponse.builder()
                 .accessToken(null)
                 .refreshToken(null)
