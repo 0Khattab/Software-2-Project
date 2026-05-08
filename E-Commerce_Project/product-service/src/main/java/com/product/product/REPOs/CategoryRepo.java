@@ -11,8 +11,6 @@ import com.product.product.Models.Category;
 
 @Repository
 public interface CategoryRepo extends JpaRepository<Category, Long> {
-    boolean existsByName(String name);
-
     List<Category> findByParent_Id(Long parentId);
 
     @Modifying

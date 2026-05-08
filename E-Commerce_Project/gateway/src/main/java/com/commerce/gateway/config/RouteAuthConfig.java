@@ -17,23 +17,42 @@ public class RouteAuthConfig {
 
             RouteRule.adminOnly("/admin/**"),
             RouteRule.adminOnly("/users/manage/**"),
-            
+
             // Product routes
             RouteRule.withPermission(
-                "/products/**", HttpMethod.POST,
+                "/admin/products/**", HttpMethod.POST,
                 "product:create", "ADMIN","EMPLOYEE"),
 
             RouteRule.withPermission(
-                "/products/**", HttpMethod.PUT,
+                "/admin/products/**", HttpMethod.PUT,
                 "product:update", "ADMIN","EMPLOYEE"),
 
             RouteRule.withPermission(
-                "/products/**", HttpMethod.DELETE,
+                "/admin/products/**", HttpMethod.DELETE,
                 "product:delete", "ADMIN","EMPLOYEE"),
 
             RouteRule.withPermission(
                 "/products/**", HttpMethod.GET,
                 "product:read", "USER", "ADMIN"),
+
+            // category routes
+            RouteRule.withPermission(
+                "/admin/categories/**", HttpMethod.POST,
+                "category:create", "ADMIN","EMPLOYEE"),
+
+            RouteRule.withPermission(
+                "/admin/categories/**", HttpMethod.PUT,
+                "category:update", "ADMIN","EMPLOYEE"),
+
+            RouteRule.withPermission(
+                "/admin/categories/**", HttpMethod.DELETE,
+                "category:delete", "ADMIN","EMPLOYEE"),
+
+            RouteRule.withPermission(
+                "/categories/**", HttpMethod.GET,
+                "category:read", "USER", "ADMIN"),
+
+
 
             RouteRule.forMethod("/products/**", HttpMethod.GET,    "USER", "EMPLOYEE"),
             RouteRule.forMethod("/auth/refresh",   HttpMethod.POST,    "USER", "EMPLOYEE"),

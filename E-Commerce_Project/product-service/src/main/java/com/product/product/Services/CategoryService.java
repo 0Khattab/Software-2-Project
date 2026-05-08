@@ -49,10 +49,6 @@ public class CategoryService implements ICategoryService {
     public Category create(CategoryCreateDTO categoryDTO) {
 
         Category category = new Category();
-
-        if (categoryRepo.existsByName(categoryDTO.name())) {
-            throw CustomExceptionResponse.Conflict("Category with name " + categoryDTO.name() + " already exists");
-        }
         category.setName(categoryDTO.name());
 
         if (categoryDTO.parentId() != null) {
@@ -70,9 +66,6 @@ public class CategoryService implements ICategoryService {
         Category category = findById(categoryId);
 
         if (categoryDTO.name() != null && !categoryDTO.name().equals(category.getName())) {
-            if (categoryRepo.existsByName(categoryDTO.name())) {
-                throw CustomExceptionResponse.Conflict("Category with name " + categoryDTO.name() + " already exists");
-            }
             category.setName(categoryDTO.name());
         }
 

@@ -11,14 +11,13 @@ import com.commerce.auth_service.dto.AddEmployeeRequest;
 import com.commerce.auth_service.dto.UserResponse;
 import com.commerce.auth_service.entity.*;
 import com.commerce.auth_service.exception.*;
+import com.commerce.auth_service.interfaces.IEmployeeService;
 import com.commerce.auth_service.repository.*;
 
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
-public class EmployeeService {
+public class EmployeeServiceImp implements IEmployeeService {
 
     @Autowired
     private UserRepository userRepository;
@@ -57,10 +56,6 @@ public class EmployeeService {
                 .build();
         userRepository.save(employee);
         assignPermissionsToEmployee(employee, requestedPermissions);
-
-        log.info("Employee created: {} by requester: {}",
-        employee.getEmail(), requester.getEmail());
-
         return mapToResponse(employee, requestedPermissions);
     }
 
@@ -86,9 +81,6 @@ public class EmployeeService {
         userPermissionRepository.deleteAllByUserId(employeeId);
 
         assignPermissionsToEmployee(employee, newPermissions);
-
-        log.info("Permissions updated for employee: {} by: {}",
-        employee.getEmail(), requester.getEmail());
     }
 
     public UserResponse getEmployee(String employeeId) {
@@ -127,11 +119,7 @@ public class EmployeeService {
             throw new ForbiddenException("Target user is not an employee");
         }
 
-        // userPermissionRepository.deleteAllByUserId(employeeId);
         userRepository.delete(employee);
-
-        log.info("Employee deleted: {} by: {}",
-        employee.getEmail(), requester.getEmail());
     }
 
 

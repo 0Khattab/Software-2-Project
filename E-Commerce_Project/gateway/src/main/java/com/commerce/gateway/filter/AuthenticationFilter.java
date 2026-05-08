@@ -36,7 +36,9 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         private static final Set<String> PUBLIC_PATHS = Set.of(
                         "/auth/login",
                         "/auth/register",
-                        "/auth/refresh");
+                        "/auth/refresh",
+                        "/auth/forgot-password",   
+                        "/auth/reset-password" ) ;
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {

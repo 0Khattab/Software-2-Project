@@ -7,12 +7,14 @@ import javax.crypto.SecretKey;
 
 import com.commerce.auth_service.config.JwtProperties;
 import com.commerce.auth_service.entity.User;
+import com.commerce.auth_service.interfaces.IJwtService;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-public class JwtService {
+public class JwtServiceImp implements IJwtService  {
 
     // @Value("${jwt.secret}")
     // private String secretKey;
