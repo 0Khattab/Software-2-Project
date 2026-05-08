@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.commerce.auth_service.dto.*;
-import com.commerce.auth_service.service.AuthService;
-import com.commerce.auth_service.service.PasswordResetService;
+import com.commerce.auth_service.service.AuthServiceImp;
+import com.commerce.auth_service.service.PasswordResetServiceImp;
 
 import jakarta.validation.Valid;
 
@@ -17,9 +17,9 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
     @Autowired
-    private AuthService authService;
+    private AuthServiceImp authService;
     @Autowired
-    private PasswordResetService passwordResetService;
+    private PasswordResetServiceImp passwordResetService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request) {

@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 import com.commerce.auth_service.entity.RefreshToken;
 import com.commerce.auth_service.entity.User;
 import com.commerce.auth_service.exception.TokenInvalidException;
+import com.commerce.auth_service.interfaces.IRefreshTokenService;
 import com.commerce.auth_service.repository.RefreshTokenRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class RefreshTokenService {
+public class RefreshTokenServiceImp implements IRefreshTokenService {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 

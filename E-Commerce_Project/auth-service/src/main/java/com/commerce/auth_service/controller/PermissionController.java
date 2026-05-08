@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.commerce.auth_service.dto.PermissionRequest;
 import com.commerce.auth_service.entity.Permission;
-import com.commerce.auth_service.service.PermissionService;
+import com.commerce.auth_service.service.PermissionServiceImp;
 
 import jakarta.validation.Valid;
 
@@ -18,7 +18,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/admin/auth")
 public class PermissionController {
     @Autowired
-    private PermissionService permissionService;
+    private PermissionServiceImp permissionService;
 
     @GetMapping("/{userId}/permissions")
     public ResponseEntity<Set<String>> getUserPermissions(

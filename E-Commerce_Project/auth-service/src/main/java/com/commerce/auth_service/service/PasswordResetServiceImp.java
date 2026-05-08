@@ -19,6 +19,7 @@ import com.commerce.auth_service.entity.PasswordResetToken;
 import com.commerce.auth_service.entity.User;
 import com.commerce.auth_service.exception.PasswordMismatchException;
 import com.commerce.auth_service.exception.TokenInvalidException;
+import com.commerce.auth_service.interfaces.IPasswordResetService;
 import com.commerce.auth_service.repository.PasswordResetTokenRepository;
 import com.commerce.auth_service.repository.UserRepository;
 
@@ -27,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class PasswordResetService {
+public class PasswordResetServiceImp implements IPasswordResetService {
     
     @Autowired
     private UserRepository userRepository;
@@ -36,7 +37,7 @@ public class PasswordResetService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private EmailService emailService;
+    private EmailServiceImp emailService;
 
     @Value("${app.reset-token-expiry-minutes:15}")
     private int tokenExpiryMinutes;

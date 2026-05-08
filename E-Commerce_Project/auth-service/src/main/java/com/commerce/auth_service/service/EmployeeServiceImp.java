@@ -11,12 +11,13 @@ import com.commerce.auth_service.dto.AddEmployeeRequest;
 import com.commerce.auth_service.dto.UserResponse;
 import com.commerce.auth_service.entity.*;
 import com.commerce.auth_service.exception.*;
+import com.commerce.auth_service.interfaces.IEmployeeService;
 import com.commerce.auth_service.repository.*;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class EmployeeService {
+public class EmployeeServiceImp implements IEmployeeService {
 
     @Autowired
     private UserRepository userRepository;

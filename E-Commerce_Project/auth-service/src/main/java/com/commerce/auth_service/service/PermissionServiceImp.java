@@ -8,13 +8,14 @@ import org.springframework.stereotype.Service;
 
 import com.commerce.auth_service.entity.*;
 import com.commerce.auth_service.exception.ResourceNotFoundException;
+import com.commerce.auth_service.interfaces.IPermissionService;
 import com.commerce.auth_service.repository.*;
 
 import jakarta.transaction.Transactional;
 
 
 @Service
-public class PermissionService {
+public class PermissionServiceImp implements IPermissionService {
     
     @Autowired
     private PermissionRepository permissionRepository;

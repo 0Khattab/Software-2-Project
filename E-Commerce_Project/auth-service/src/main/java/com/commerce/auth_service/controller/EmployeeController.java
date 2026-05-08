@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.commerce.auth_service.dto.AddEmployeeRequest;
 import com.commerce.auth_service.dto.UserResponse;
-import com.commerce.auth_service.service.EmployeeService;
+import com.commerce.auth_service.service.EmployeeServiceImp;
 
 import jakarta.validation.Valid;
 
@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 public class EmployeeController {
     
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceImp employeeService;
 
     @PostMapping("/add")
     public ResponseEntity<UserResponse> addEmployee(
