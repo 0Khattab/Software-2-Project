@@ -13,11 +13,9 @@ import com.commerce.auth_service.dto.error.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
-
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(
@@ -79,7 +77,6 @@ public class GlobalExceptionHandler {
         return buildResponse(ex.getStatus(), ex.getMessage(), request);
     }
 
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(
             MethodArgumentNotValidException ex,
@@ -95,7 +92,6 @@ public class GlobalExceptionHandler {
 
         return buildResponse(HttpStatus.BAD_REQUEST, message, request);
     }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
@@ -119,6 +115,15 @@ public class GlobalExceptionHandler {
         return buildResponse(ex.getStatus(), ex.getMessage(), request);
     }
 
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordMismatch(
+            PasswordMismatchException ex,
+            HttpServletRequest request) {
+
+        log.warn("Password mismatch at {}: {}", request.getRequestURI(),
+                ex.getMessage());
+        return buildResponse(ex.getStatus(), ex.getMessage(), request);
+    }
 
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status,
             String message,
