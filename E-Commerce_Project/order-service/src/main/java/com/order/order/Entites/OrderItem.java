@@ -40,6 +40,12 @@ public class OrderItem {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(name = "variant_id", nullable = false, length = 36)
+    private Long variantId;
+
+    @Column(name = "variant_label", nullable = false)
+    private String variantLabel;
+
     @Column(name = "line_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal lineTotal;
 }

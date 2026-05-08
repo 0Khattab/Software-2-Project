@@ -3,7 +3,9 @@ package com.order.order.messages;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -12,14 +14,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * HTTP client for Product Service internal endpoints.
- * Calls http://product-service:8083/api/internal/...
- * These routes are NOT exposed through the API Gateway.
- * Security comes from Docker network position, not JWT.
- */
 @Component
 @Slf4j
 public class ProductServiceClient {
@@ -35,13 +32,14 @@ public class ProductServiceClient {
     }
 
     public ProductDetail getProductDetail(String productId) {
-        String url = baseUrl + "products/" + productId;
+        String url = baseUrl + "/products/" + productId;
         try {
-            ProductDetail detail = restTemplate.getForObject(url, ProductDetail.class);
-            if (detail == null) {
+            ProductResponse response = restTemplate.getForObject(url, ProductResponse.class);
+            System.out.println(response);
+            if (response == null || response.getData() == null) {
                 throw new RuntimeException("Empty response from Product Service for productId=" + productId);
             }
-            return detail;
+            return response.getData();
         } catch (HttpClientErrorException.NotFound e) {
             throw new com.order.order.Exceptions.ResourceNotFoundException(
                     "Product not found: " + productId);
@@ -54,15 +52,14 @@ public class ProductServiceClient {
         }
     }
 
-    public void decrementStock(String productId, int qty) {
-        String url = baseUrl + "products/" + productId
-                + "/stock/decrement?qty=" + qty;
+    public void decrementStock(String productId, int qty, Long variantId) {
+        String url = baseUrl + "/products/" + productId
+                + "/stock/decrement?qty=" + qty + "&variantId=" + variantId;
         try {
             restTemplate.put(url, null);
-            log.debug("Stock decremented: productId={} qty={}", productId, qty);
+            log.debug("Stock decremented: productId={} qty={} variantId={}", productId, qty, variantId);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.CONFLICT) {
-                // Stock ran out between validation and decrement
                 log.warn("STOCK_CONFLICT: productId={} qty={} - insufficient stock at decrement time",
                         productId, qty);
             } else {
@@ -70,39 +67,57 @@ public class ProductServiceClient {
                         productId, qty, e.getStatusCode(), e.getMessage());
             }
         } catch (Exception e) {
-            // Non-fatal — log for reconciliation
             log.error("STOCK_DISCREPANCY: decrementStock failed productId={} qty={}: {}",
                     productId, qty, e.getMessage());
         }
     }
 
-    // ── Inner DTO — mirrors Product Service internal response ─────────────────
 
     @Data
-    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProductDetail {
-        private String productId;
-        private String productName;
-        private String primaryImageUrl;
-        private BigDecimal price;
-        private int stockQty;
-        private String stockStatus;
-        List<VariantResponseDTO> variants;
-    //     Long id,
-    //     String name,
-    //     String description,
-    //     BigDecimal price,
-    //     ProductStatus status,
-    //     String category,
-    //     String categoryParent,
-    //     List<String>images,
+    public static class ProductResponse {
+
+        private String status;
+
+        private ProductDetail data;
     }
-    
-    public record VariantResponseDTO(
-            Long id,
-            String size,
-            Integer stockQuantity) {
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class ProductDetail {
+
+        private Long id;
+
+        private String name;
+
+        private String description;
+
+        private BigDecimal price;
+
+        private String status;
+
+        private String category;
+
+        private String categoryParent;
+
+        private List<String> images;
+
+        private List<VariantResponseDTO> variants = new ArrayList<>();
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class VariantResponseDTO {
+
+        private Long id;
+
+        private String size;
+
+        private Integer stockQuantity;
     }
 }
