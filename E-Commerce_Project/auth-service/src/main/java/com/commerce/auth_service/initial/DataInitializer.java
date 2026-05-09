@@ -41,6 +41,12 @@ public class DataInitializer implements ApplicationRunner {
         Map.entry("order:create",    "Create new orders"),
         Map.entry("order:update",    "Update order details"),
         Map.entry("order:cancel",    "Cancel orders"),
+        Map.entry("cart:create",     "Create Cart"),
+        Map.entry("cart:update",     "Update Cart"),
+        Map.entry("cart:delete-item",     "Delete Item from Cart"),
+        Map.entry("cart:add-item",     "Add Item to Cart"),
+        Map.entry("cart:clear",     "Clear Cart"),
+        Map.entry("cart:read", "view Cart"),
         // Payment
         Map.entry("payment:read",    "View payment details"),
         Map.entry("payment:process", "Process payments"),
@@ -71,12 +77,19 @@ public class DataInitializer implements ApplicationRunner {
         "order:read",
         "order:create",
         "order:cancel",
+        "order:update",
         "payment:read",
         "payment:process",
         "review:read",
         "review:create",
         "category:read",
-        "user:read"
+        "user:read",
+        "cart:create",
+        "cart:update",
+        "cart:delete-item",
+        "cart:add-item",
+        "cart:clear",
+        "cart:read"
     );
 
     @Override
