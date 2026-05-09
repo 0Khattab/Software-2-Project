@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.order.order.interfaces.CartService;
 import com.order.order.messages.*;
 import com.order.order.messages.ProductServiceClient.ProductDetail;
+import com.order.order.messages.ProductServiceClient.VariantResponseDTO;
 import com.order.order.repos.*;
 import com.order.order.DTOs.Request.*;
 import com.order.order.DTOs.Response.*;
@@ -45,58 +46,67 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponse addItem(String userId, AddCartItemRequest request) {
-        return null;
-        // Cart cart = findOrCreateCart(userId);
+        Cart cart = findOrCreateCart(userId);
 
-        // // Enforce max items limit
-        // if (cart.getItems().size() >= maxCartItems) {
-        //     throw new IllegalStateException(
-        //             "Cart cannot exceed " + maxCartItems + " items.");
-        // }
+        if (cart.getItems().size() >= maxCartItems) {
+            throw new IllegalStateException(
+                    "Cart cannot exceed " + maxCartItems + " items.");
+        }
 
-        // // If same product already in cart — just bump quantity
-        // cart.getItems().stream()
-        //         .filter(i -> i.getProductId().equals(request.getProductId()))
-        //         .findFirst()
-        //         .ifPresentOrElse(
-        //                 existing -> {
-        //                     existing.setQuantity(existing.getQuantity() + request.getQuantity());
-        //                     log.debug("Cart item quantity updated: productId={} newQty={}",
-        //                             request.getProductId(), existing.getQuantity());
-        //                 },
-        //                 () -> {
-        //                     // ── 1. Fetch live snapshot from Product Service ──────────
-        //                     ProductDetail detail = productClient.getProductDetail(request.getProductId());
+        cart.getItems().stream()
+                .filter(i -> i.getProductId().equals(request.getProductId())
+                        && matchesVariant(i, request.getVariantId()))
+                .findFirst()
+                .ifPresentOrElse(
+                        existing -> {
+                            existing.setQuantity(existing.getQuantity() + request.getQuantity());
+                            log.debug("Cart item quantity updated: productId={} variantId={} newQty={}",
+                                    request.getProductId(), request.getVariantId(),
+                                    existing.getQuantity());
+                        },
+                        () -> {
+                            ProductDetail detail = productClient.getProductDetail(request.getProductId());
 
-        //                     // ── 2. Stock gate — reject before adding ─────────────────
-        //                     if ("OUT_OF_STOCK".equals(detail.getStockStatus())) {
-        //                         throw new InsufficientStockException(
-        //                                 detail.getProductName(), request.getQuantity(), 0);
-        //                     }
-        //                     if (detail.getStockQty() < request.getQuantity()) {
-        //                         throw new InsufficientStockException(
-        //                                 detail.getProductName(),
-        //                                 request.getQuantity(),
-        //                                 detail.getStockQty());
-        //                     }
+                            VariantResponseDTO variant = detail.getVariants().stream()
+                                    .filter(v -> v.getId().equals(Long.parseLong(request.getVariantId())))
+                                    .findFirst()
+                                    .orElseThrow(() -> new ResourceNotFoundException(
+                                            "Variant not found: " + request.getVariantId()
+                                                    + " for product: " + request.getProductId()));
+                            if (variant.getStockQuantity() == null
+                                    || variant.getStockQuantity() <= 0) {
+                                throw new InsufficientStockException(
+                                        detail.getName() + " (size: " + variant.getSize() + ")",
+                                        request.getQuantity(),
+                                        0);
+                            }
+                            if (variant.getStockQuantity() < request.getQuantity()) {
+                                throw new InsufficientStockException(
+                                        detail.getName() + " (size: " + variant.getSize() + ")",
+                                        request.getQuantity(),
+                                        variant.getStockQuantity());
+                            }
+                            String ID = String.valueOf(detail.getId());
 
-        //                     // ── 3. Snapshot all fields — Order Service owns these now ─
-        //                     CartItem newItem = CartItem.builder()
-        //                             .cart(cart)
-        //                             .productId(detail.getProductId())
-        //                             .productName(detail.getProductName()) // SNAPSHOT
-        //                             .imageUrl(detail.getPrimaryImageUrl()) // SNAPSHOT
-        //                             .unitPrice(detail.getPrice()) // SNAPSHOT!
-        //                             .quantity(request.getQuantity())
-        //                             .build();
+                            CartItem newItem = CartItem.builder()
+                                    .cart(cart)
+                                    .productId(ID)
+                                    .productName(detail.getName())
+                                    .imageUrl(detail.getImages().stream().findFirst().orElse(null))
+                                    .unitPrice(detail.getPrice())
+                                    .variantId(variant.getId()) 
+                                    .variantLabel("Size: " + variant.getSize()) 
+                                    .quantity(request.getQuantity())
+                                    .build();
 
-        //                     cart.getItems().add(newItem);
-        //                     log.debug("New item added to cart: productId={} price={}",
-        //                             detail.getProductId(), detail.getPrice());
-        //                 });
+                            cart.getItems().add(newItem);
+                            log.debug("New item added: productId={} variantId={} size={} price={}",
+                                    ID , variant.getId(),
+                                    variant.getSize(), detail.getPrice());
+                        });
 
-        // cartRepository.save(cart);
-        // return toCartResponse(cart);
+        cartRepository.save(cart);
+        return toCartResponse(cart);
     }
 
     // ── PUT /api/cart/items/{id} ──────────────────────────────────────────────
@@ -156,7 +166,6 @@ public class CartServiceImpl implements CartService {
                 .orElse(0);
     }
 
-    // ── Private helpers ───────────────────────────────────────────────────────
 
     private Cart findOrCreateCart(String userId) {
         return cartRepository.findByUserId(userId)
@@ -164,6 +173,15 @@ public class CartServiceImpl implements CartService {
                     log.debug("Creating new cart for userId={}", userId);
                     return cartRepository.save(Cart.builder().userId(userId).build());
                 });
+    }
+
+
+    private boolean matchesVariant(CartItem item, String  requestedVariantId) {
+        if (item.getVariantId() == null && requestedVariantId == null)
+            return true;
+        if (item.getVariantId() == null || requestedVariantId == null)
+            return false;
+        return item.getVariantId().equals(requestedVariantId);
     }
 
     private CartResponse toCartResponse(Cart cart) {
@@ -175,6 +193,8 @@ public class CartServiceImpl implements CartService {
                             .itemId(item.getId())
                             .productId(item.getProductId())
                             .productName(item.getProductName())
+                            .variantId(item.getVariantId())
+                            .variantLabel(item.getVariantLabel())
                             .imageUrl(item.getImageUrl())
                             .unitPrice(item.getUnitPrice())
                             .quantity(item.getQuantity())

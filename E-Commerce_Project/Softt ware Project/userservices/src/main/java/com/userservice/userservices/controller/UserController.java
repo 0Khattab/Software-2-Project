@@ -1,6 +1,3 @@
-
-
-
 package com.userservice.userservices.controller;
 
 import com.userservice.userservices.dto.request.AddressRequest;
@@ -20,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -29,14 +26,14 @@ public class UserController {
     // US-5 — GET /api/users/me
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserProfileResponse>> getProfile(
-            @RequestHeader("X-User-Id") String userId) {
+            @RequestHeader("User-Id") String userId) {
         return ResponseEntity.ok(ApiResponse.success(userService.getProfile(userId)));
     }
 
     // US-5 — PUT /api/users/me
     @PutMapping("/me")
     public ResponseEntity<ApiResponse<UserProfileResponse>> updateProfile(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @Valid @RequestBody UpdateProfileRequest request) {
         return ResponseEntity.ok(
                 ApiResponse.success("Profile updated successfully",
@@ -55,7 +52,7 @@ public class UserController {
     // US-5, US-19 — POST /api/users/me/addresses
     @PostMapping("/me/addresses")
     public ResponseEntity<ApiResponse<AddressResponse>> addAddress(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @Valid @RequestBody AddressRequest request) {
         AddressResponse address = userService.addAddress(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -65,14 +62,14 @@ public class UserController {
     // US-19 — GET /api/users/me/addresses
     @GetMapping("/me/addresses")
     public ResponseEntity<ApiResponse<List<AddressResponse>>> getAddresses(
-            @RequestHeader("X-User-Id") String userId) {
+            @RequestHeader("User-Id") String userId) {
         return ResponseEntity.ok(ApiResponse.success(userService.getAddresses(userId)));
     }
 
     // US-5 — PUT /api/users/me/addresses/{id}
     @PutMapping("/me/addresses/{id}")
     public ResponseEntity<ApiResponse<AddressResponse>> updateAddress(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @PathVariable String id,
             @Valid @RequestBody AddressRequest request) {
         return ResponseEntity.ok(
@@ -83,7 +80,7 @@ public class UserController {
     // US-5 — DELETE /api/users/me/addresses/{id}
     @DeleteMapping("/me/addresses/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteAddress(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @PathVariable String id) {
         userService.deleteAddress(userId, id);
         return ResponseEntity.ok(ApiResponse.success("Address deleted successfully", null));
@@ -92,7 +89,7 @@ public class UserController {
     // US-7 — POST /api/users/support
     @PostMapping("/support")
     public ResponseEntity<ApiResponse<Void>> submitSupport(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @Valid @RequestBody SupportRequest request) {
         userService.submitSupportRequest(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Support request submitted successfully", null));

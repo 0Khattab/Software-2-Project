@@ -1,10 +1,6 @@
 package com.order.order.DTOs.Response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.math.BigDecimal;
 
 @Data
@@ -15,8 +11,10 @@ public class CartItemResponse {
     private String itemId;
     private String productId;
     private String productName;
+    private Long variantId; // e.g. 3 (references variant in Product Service)
+    private String variantLabel; // e.g. "Size: M"
     private String imageUrl;
-    private BigDecimal unitPrice;
+    private BigDecimal unitPrice; // price at time of add-to-cart (display only)
     private int quantity;
     private BigDecimal lineTotal;
 }

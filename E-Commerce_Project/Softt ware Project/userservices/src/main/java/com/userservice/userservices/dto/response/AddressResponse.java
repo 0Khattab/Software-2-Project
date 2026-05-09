@@ -9,8 +9,8 @@ import lombok.*;
 public class AddressResponse {
     private String id;
     private String recipientName;
-    // private String street;
-    // private String city;
-    // private String country;
-    // private String zipCode;
+    private String street;
+    private String city;
+    private String country;
+    private String zipCode;
 }
