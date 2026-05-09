@@ -23,6 +23,7 @@ public class OrderPlacedEvent {
     private String shippingCountry;
     private String paymentMethod;
     private LocalDateTime placedAt;
+    
 
     @Data
     @Builder

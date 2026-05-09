@@ -36,6 +36,12 @@ public class CartItem {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "variant_id", nullable = false, length = 36)
+    private Long variantId;
+
+    @Column(name = "variant_label", nullable = false)
+    private String variantLabel;
+
     @Column(nullable = false)
     private int quantity;
 }

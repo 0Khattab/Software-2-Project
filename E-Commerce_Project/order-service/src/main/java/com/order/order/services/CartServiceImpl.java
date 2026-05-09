@@ -45,57 +45,58 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponse addItem(String userId, AddCartItemRequest request) {
-        Cart cart = findOrCreateCart(userId);
+        return null;
+        // Cart cart = findOrCreateCart(userId);
 
-        // Enforce max items limit
-        if (cart.getItems().size() >= maxCartItems) {
-            throw new IllegalStateException(
-                    "Cart cannot exceed " + maxCartItems + " items.");
-        }
+        // // Enforce max items limit
+        // if (cart.getItems().size() >= maxCartItems) {
+        //     throw new IllegalStateException(
+        //             "Cart cannot exceed " + maxCartItems + " items.");
+        // }
 
-        // If same product already in cart — just bump quantity
-        cart.getItems().stream()
-                .filter(i -> i.getProductId().equals(request.getProductId()))
-                .findFirst()
-                .ifPresentOrElse(
-                        existing -> {
-                            existing.setQuantity(existing.getQuantity() + request.getQuantity());
-                            log.debug("Cart item quantity updated: productId={} newQty={}",
-                                    request.getProductId(), existing.getQuantity());
-                        },
-                        () -> {
-                            // ── 1. Fetch live snapshot from Product Service ──────────
-                            ProductDetail detail = productClient.getProductDetail(request.getProductId());
+        // // If same product already in cart — just bump quantity
+        // cart.getItems().stream()
+        //         .filter(i -> i.getProductId().equals(request.getProductId()))
+        //         .findFirst()
+        //         .ifPresentOrElse(
+        //                 existing -> {
+        //                     existing.setQuantity(existing.getQuantity() + request.getQuantity());
+        //                     log.debug("Cart item quantity updated: productId={} newQty={}",
+        //                             request.getProductId(), existing.getQuantity());
+        //                 },
+        //                 () -> {
+        //                     // ── 1. Fetch live snapshot from Product Service ──────────
+        //                     ProductDetail detail = productClient.getProductDetail(request.getProductId());
 
-                            // ── 2. Stock gate — reject before adding ─────────────────
-                            if ("OUT_OF_STOCK".equals(detail.getStockStatus())) {
-                                throw new InsufficientStockException(
-                                        detail.getProductName(), request.getQuantity(), 0);
-                            }
-                            if (detail.getStockQty() < request.getQuantity()) {
-                                throw new InsufficientStockException(
-                                        detail.getProductName(),
-                                        request.getQuantity(),
-                                        detail.getStockQty());
-                            }
+        //                     // ── 2. Stock gate — reject before adding ─────────────────
+        //                     if ("OUT_OF_STOCK".equals(detail.getStockStatus())) {
+        //                         throw new InsufficientStockException(
+        //                                 detail.getProductName(), request.getQuantity(), 0);
+        //                     }
+        //                     if (detail.getStockQty() < request.getQuantity()) {
+        //                         throw new InsufficientStockException(
+        //                                 detail.getProductName(),
+        //                                 request.getQuantity(),
+        //                                 detail.getStockQty());
+        //                     }
 
-                            // ── 3. Snapshot all fields — Order Service owns these now ─
-                            CartItem newItem = CartItem.builder()
-                                    .cart(cart)
-                                    .productId(detail.getProductId())
-                                    .productName(detail.getProductName()) // SNAPSHOT
-                                    .imageUrl(detail.getPrimaryImageUrl()) // SNAPSHOT
-                                    .unitPrice(detail.getPrice()) // SNAPSHOT!
-                                    .quantity(request.getQuantity())
-                                    .build();
+        //                     // ── 3. Snapshot all fields — Order Service owns these now ─
+        //                     CartItem newItem = CartItem.builder()
+        //                             .cart(cart)
+        //                             .productId(detail.getProductId())
+        //                             .productName(detail.getProductName()) // SNAPSHOT
+        //                             .imageUrl(detail.getPrimaryImageUrl()) // SNAPSHOT
+        //                             .unitPrice(detail.getPrice()) // SNAPSHOT!
+        //                             .quantity(request.getQuantity())
+        //                             .build();
 
-                            cart.getItems().add(newItem);
-                            log.debug("New item added to cart: productId={} price={}",
-                                    detail.getProductId(), detail.getPrice());
-                        });
+        //                     cart.getItems().add(newItem);
+        //                     log.debug("New item added to cart: productId={} price={}",
+        //                             detail.getProductId(), detail.getPrice());
+        //                 });
 
-        cartRepository.save(cart);
-        return toCartResponse(cart);
+        // cartRepository.save(cart);
+        // return toCartResponse(cart);
     }
 
     // ── PUT /api/cart/items/{id} ──────────────────────────────────────────────
