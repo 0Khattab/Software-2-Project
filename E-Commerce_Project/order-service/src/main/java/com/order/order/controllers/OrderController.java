@@ -30,7 +30,7 @@ public class OrderController {
  
     @PostMapping
     public ResponseEntity<ApiResponse<OrderDetailResponse>> placeOrder(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @Valid @RequestBody PlaceOrderRequest request) {
         OrderDetailResponse order = orderService.placeOrder(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -39,7 +39,7 @@ public class OrderController {
  
     @GetMapping
     public ResponseEntity<ApiResponse<PagedResponse<OrderSummaryResponse>>> getMyOrders(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @RequestParam(defaultValue = "0")  int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(
@@ -48,7 +48,7 @@ public class OrderController {
  
     @GetMapping("/{orderId}")
     public ResponseEntity<ApiResponse<OrderDetailResponse>> getOrderDetail(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @PathVariable String orderId) {
         return ResponseEntity.ok(
                 ApiResponse.ok(orderService.getMyOrderDetail(userId, orderId)));

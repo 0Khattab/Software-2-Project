@@ -15,58 +15,75 @@ public class RouteAuthConfig {
     public List<RouteRule> routeRules() {
         return List.of(
 
-            RouteRule.adminOnly("/admin/**"),
-            RouteRule.adminOnly("/users/manage/**"),
+                RouteRule.adminOnly("/admin/**"),
+                RouteRule.adminOnly("/users/manage/**"),
 
-            // Product routes
-            RouteRule.withPermission(
-                "/admin/products/**", HttpMethod.POST,
-                "product:create", "ADMIN","EMPLOYEE"),
+                // Product routes
+                RouteRule.withPermission(
+                        "/admin/products/**", HttpMethod.POST,
+                        "product:create", "ADMIN", "EMPLOYEE"),
 
-            RouteRule.withPermission(
-                "/admin/products/**", HttpMethod.PUT,
-                "product:update", "ADMIN","EMPLOYEE"),
+                RouteRule.withPermission(
+                        "/admin/products/**", HttpMethod.PUT,
+                        "product:update", "ADMIN", "EMPLOYEE"),
 
-            RouteRule.withPermission(
-                "/admin/products/**", HttpMethod.DELETE,
-                "product:delete", "ADMIN","EMPLOYEE"),
+                RouteRule.withPermission(
+                        "/admin/products/**", HttpMethod.DELETE,
+                        "product:delete", "ADMIN", "EMPLOYEE"),
 
-            RouteRule.withPermission(
-                "/products/**", HttpMethod.GET,
-                "product:read", "USER", "ADMIN"),
+                RouteRule.withPermission(
+                        "/products/**", HttpMethod.GET,
+                        "product:read", "USER", "ADMIN"),
 
-            // category routes
-            RouteRule.withPermission(
-                "/admin/categories/**", HttpMethod.POST,
-                "category:create", "ADMIN","EMPLOYEE"),
+                // category routes
+                RouteRule.withPermission(
+                        "/admin/categories/**", HttpMethod.POST,
+                        "category:create", "ADMIN", "EMPLOYEE"),
 
-            RouteRule.withPermission(
-                "/admin/categories/**", HttpMethod.PUT,
-                "category:update", "ADMIN","EMPLOYEE"),
+                RouteRule.withPermission(
+                        "/admin/categories/**", HttpMethod.PUT,
+                        "category:update", "ADMIN", "EMPLOYEE"),
 
-            RouteRule.withPermission(
-                "/admin/categories/**", HttpMethod.DELETE,
-                "category:delete", "ADMIN","EMPLOYEE"),
+                RouteRule.withPermission(
+                        "/admin/categories/**", HttpMethod.DELETE,
+                        "category:delete", "ADMIN", "EMPLOYEE"),
 
-            RouteRule.withPermission(
-                "/categories/**", HttpMethod.GET,
-                "category:read", "USER", "ADMIN"),
+                RouteRule.withPermission(
+                        "/categories/**", HttpMethod.GET,
+                        "category:read", "USER", "ADMIN"),
 
+                RouteRule.forMethod("/products/**", HttpMethod.GET, "USER", "EMPLOYEE"),
+                RouteRule.forMethod("/auth/refresh", HttpMethod.POST, "USER", "EMPLOYEE"),
 
+                RouteRule.forMethod("/products/**", HttpMethod.DELETE, "ADMIN"),
+                RouteRule.forMethod("/products/**", HttpMethod.POST, "ADMIN"),
+                RouteRule.forMethod("/products/**", HttpMethod.PUT, "ADMIN"),
 
-            RouteRule.forMethod("/products/**", HttpMethod.GET,    "USER", "EMPLOYEE"),
-            RouteRule.forMethod("/auth/refresh",   HttpMethod.POST,    "USER", "EMPLOYEE"),
+                // RouteRule.forRoles("/products/**", "USER", "EMPLOYEE"),
+                RouteRule.forRoles("/orders/**", "USER", "EMPLOYEE"),
+                RouteRule.forRoles("/payments/**", "USER", "EMPLOYEE"),
+                RouteRule.forRoles("/auth/**", "USER", "EMPLOYEE"),
+                RouteRule.forRoles("/cart/**", "USER"),
 
-            RouteRule.forMethod("/products/**", HttpMethod.DELETE, "ADMIN"),
-            RouteRule.forMethod("/products/**", HttpMethod.POST,   "ADMIN"),
-            RouteRule.forMethod("/products/**", HttpMethod.PUT,    "ADMIN"),
-            
-            // RouteRule.forRoles("/products/**", "USER", "EMPLOYEE"),
-            RouteRule.forRoles("/orders/**",   "USER", "EMPLOYEE"),
-            RouteRule.forRoles("/payments/**", "USER", "EMPLOYEE"),
-            RouteRule.forRoles("/auth/**",  "USER", "EMPLOYEE"),
+                RouteRule.adminOnly("/**"),
 
-            RouteRule.adminOnly("/**")   
+                // Order routes
+                RouteRule.withPermission(
+                        "/admin/orders/**", HttpMethod.POST,
+                        "order:create", "ADMIN", "EMPLOYEE"),
+
+                RouteRule.withPermission(
+                        "/admin/orders/**", HttpMethod.PATCH,
+                        "order:update", "ADMIN", "EMPLOYEE"),
+
+                RouteRule.withPermission(
+                        "/admin/orders/**", HttpMethod.DELETE,
+                        "order:delete", "ADMIN", "EMPLOYEE"),
+
+                RouteRule.withPermission(
+                        "/orders/**", HttpMethod.GET,
+                        "order:read", "USER", "ADMIN")
+
         );
     }
 }

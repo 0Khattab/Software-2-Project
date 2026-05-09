@@ -24,13 +24,13 @@ public class CartController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<CartResponse>> getCart(
-            @RequestHeader("X-User-Id") String userId) {
+            @RequestHeader("User-Id") String userId) {
         return ResponseEntity.ok(ApiResponse.ok(cartService.getCart(userId)));
     }
 
     @PostMapping("/items")
     public ResponseEntity<ApiResponse<CartResponse>> addItem(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @Valid @RequestBody AddCartItemRequest request) {
         CartResponse cart = cartService.addItem(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -39,7 +39,7 @@ public class CartController {
 
     @PutMapping("/items/{itemId}")
     public ResponseEntity<ApiResponse<CartResponse>> updateItem(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @PathVariable String itemId,
             @Valid @RequestBody UpdateCartItemRequest request) {
         return ResponseEntity.ok(
@@ -48,7 +48,7 @@ public class CartController {
 
     @DeleteMapping("/items/{itemId}")
     public ResponseEntity<ApiResponse<Void>> removeItem(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("User-Id") String userId,
             @PathVariable String itemId) {
         cartService.removeItem(userId, itemId);
         return ResponseEntity.ok(ApiResponse.ok("Item removed from cart", null));
@@ -56,14 +56,14 @@ public class CartController {
 
     @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> clearCart(
-            @RequestHeader("X-User-Id") String userId) {
+            @RequestHeader("User-Id") String userId) {
         cartService.clearCart(userId);
         return ResponseEntity.ok(ApiResponse.ok("Cart cleared", null));
     }
 
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<Map<String, Integer>>> getCartCount(
-            @RequestHeader("X-User-Id") String userId) {
+            @RequestHeader("User-Id") String userId) {
         return ResponseEntity.ok(
                 ApiResponse.ok(Map.of("count", cartService.getCartCount(userId))));
     }
