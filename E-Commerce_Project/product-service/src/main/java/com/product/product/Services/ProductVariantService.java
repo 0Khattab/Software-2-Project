@@ -73,5 +73,28 @@ public class ProductVariantService implements IProductVariantService {
         return variantRepo.save(variant);
     }
 
+    @Override
+    public void DecrementStock(Long productId, Long variantId, Integer quantity) {
+        Product_Variant variant = findById(productId, variantId);
+        if (variant.getStockQuantity() < quantity) {
+            throw CustomExceptionResponse.BadRequest("Not enough items in stock");
+        }
+        if (quantity < 0) {
+            throw CustomExceptionResponse.BadRequest("Quantity to decrement must be positive");
+        }
+        variant.setStockQuantity(variant.getStockQuantity() - quantity);
+        variantRepo.save(variant);
+    }
+
+    @Override
+    public void IncrementStock(Long productId, Long variantId, Integer quantity) {
+        Product_Variant variant = findById(productId, variantId);
+        if (quantity < 0) {
+            throw CustomExceptionResponse.BadRequest("Quantity to increment must be positive");
+        }
+        variant.setStockQuantity(variant.getStockQuantity() + quantity);
+        variantRepo.save(variant);
+    }
+
 
 }

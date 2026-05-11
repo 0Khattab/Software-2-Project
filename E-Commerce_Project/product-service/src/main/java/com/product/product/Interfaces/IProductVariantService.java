@@ -16,4 +16,8 @@ public interface IProductVariantService {
     Product_Variant update(Long productId, Long variantId, Product_VariantUpdateDTO variantDTO);
 
     void delete(Long productId, Long variantId);
+
+    void DecrementStock(Long productId, Long variantId, Integer quantity);
+
+    void IncrementStock(Long productId, Long variantId, Integer quantity);
 }

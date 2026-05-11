@@ -28,7 +28,7 @@ public class Product_Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "s3_url", nullable = false)
+    @Column(name = "s3_url", nullable = false, columnDefinition = "TEXT")
     private String s3Url;
 
     @Column(name = "is_primary")
